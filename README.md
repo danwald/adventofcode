@@ -10,8 +10,8 @@ Repository of submissions to [Advent of Code](https://adventofcode.com/) (by yea
 ## Usage
 
 **`python>=3.8+`**
-* stdin terminates on empties
-* will execute 2nd solution if applicable
+- stdin terminates on empties
+- will execute 2nd solution if applicable
 
 ```bash
 python <YYYY>/dayDD_<puzzlename>.py < stdin
@@ -22,20 +22,14 @@ python <YYYY>/dayDD_<puzzlename>.py < stdin
 - template
 
 ```python
-import sys
 
-def solver(line):
-    ...
-
-def main():
-    nums = []
-    while line:=sys.stdin.readline().strip():
-        nums.append(solver(line))
-    print(sum(nums))
+def main(*args, **kwargs) -> bool:
+  return True
 
 if __name__ == "__main__":
-    main()
+   assert main()
 ```
+
 ## License
 
 This project is licensed under the [MIT License](LICENSE).
