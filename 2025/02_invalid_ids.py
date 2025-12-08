@@ -29,16 +29,30 @@ def _get_eq_splits(num: int, max_half) -> tuple[
             return (tuple(),)
         first, second = int(snum[:pivot]), int(snum[-pivot:])
         return ((first, second),)
-    return (tuple(),)
+    ret = [()]
+    for i in range(len(snum)):
+        pivot, odd_len = divmod(len(snum), 1)
+        if not odd_len:
+            break
+    return (*ret,)
 
 
-def is_invalid(val: int, max_half: bool) -> bool:
+def is_invalid(val: int, max_half: bool, at_least=2) -> bool:
     splits = _get_eq_splits(val, max_half)
     if max_half:
         split = splits[0]
         if not split or split[0] != split[1]:
             return False
         return True
+    invalids = []
+    for split in splits:
+        if not split:
+            continue
+        first, *rest = split
+        if all(first == r for r in rest):
+            invalids.append(first)
+            if len(invalids) >= at_least:
+                return True
     return False
 
 
