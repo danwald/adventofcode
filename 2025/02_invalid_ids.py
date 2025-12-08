@@ -23,7 +23,7 @@ def _get_eq_splits(num: int, max_half) -> (
     snum = str(num)
     if not num:
         return tuple()
-    if max_half and not len(snum) % 2:
+    if max_half:
         pivot, odd_len = divmod(len(snum), 2)
         if odd_len:
             return tuple()
