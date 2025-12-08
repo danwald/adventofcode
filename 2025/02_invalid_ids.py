@@ -13,28 +13,30 @@ def bookends(r: str) -> tuple[int, int]:
     return start, end
 
 
-def _get_eq_splits(num: int, max_half) -> (
+def _get_eq_splits(num: int, max_half) -> tuple[
     tuple[()]
     | tuple[
         int,
         ...,
     ]
-):
+]:
     snum = str(num)
     if not num:
-        return tuple()
+        return (tuple(),)
     if max_half:
         pivot, odd_len = divmod(len(snum), 2)
         if odd_len:
-            return tuple()
-        return int(snum[:pivot]), int(snum[-pivot:])
-    return tuple()
+            return (tuple(),)
+        first, second = int(snum[:pivot]), int(snum[-pivot:])
+        return ((first, second),)
+    return (tuple(),)
 
 
 def is_invalid(val: int, max_half: bool) -> bool:
     splits = _get_eq_splits(val, max_half)
     if max_half:
-        if not splits or splits[0] != splits[1]:
+        split = splits[0]
+        if not split or split[0] != split[1]:
             return False
         return True
     return False
@@ -73,4 +75,13 @@ if __name__ == "__main__":
             max_half=True,
         )
         == 29818212493
+    )
+    assert (
+        main(
+            "11-22,95-115,998-1012,1188511880-1188511890,222220-222224,"
+            "824824821-824824827,2121212118-2121212124,"
+            "1698522-1698528,446443-446449,38593856-38593862,565653-565659",
+            max_half=False,
+        )
+        == 4174379265
     )
