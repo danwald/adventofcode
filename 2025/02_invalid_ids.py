@@ -30,10 +30,13 @@ def _get_eq_splits(num: int, max_half) -> tuple[
         first, second = int(snum[:pivot]), int(snum[-pivot:])
         return ((first, second),)
     ret = [()]
-    for i in range(len(snum)):
-        pivot, odd_len = divmod(len(snum), 1)
+    for step in range(1, len(snum) + 1):
+        pivot, odd_len = divmod(len(snum), step)
         if not odd_len:
-            break
+            subs: list[int] = []
+            for i in range(0, len(snum), step):
+                subs.append(int(snum[i : i + step]))
+            ret.append((subs))
     return (*ret,)
 
 
@@ -98,4 +101,16 @@ if __name__ == "__main__":
             max_half=False,
         )
         == 4174379265
+    )
+    assert (
+        main(
+            "2157315-2351307,9277418835-9277548385,4316210399-4316270469,5108-10166,"
+            "872858020-872881548,537939-575851,712-1001,326613-416466,53866-90153,907856-1011878,"
+            "145-267,806649-874324,6161532344-6161720341,1-19,543444404-543597493,35316486-35418695,"
+            "20-38,84775309-84908167,197736-309460,112892-187377,336-552,4789179-4964962,726183-793532,"
+            "595834-656619,1838-3473,3529-5102,48-84,92914229-92940627,65847714-65945664,64090783-64286175,"
+            "419838-474093,85-113,34939-52753,14849-30381",
+            max_half=False,
+        )
+        == 37432260594
     )
