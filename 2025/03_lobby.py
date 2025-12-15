@@ -25,8 +25,8 @@ def get_max_jolts(bank: str) -> int:
         l += 1
         r -= 1
     val = int("".join([bank[ml], bank[mr]]))
-    print(f"{bank} => {val}")
-    print(f"{'^':>l}{'^':>r}")
+    print(f"{bank} => {val} {l, r, ml, mr}")
+    return val
 
 
 def main(nums: str, **_) -> int:
