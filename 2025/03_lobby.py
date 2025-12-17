@@ -12,22 +12,27 @@ def larger(nums: str, cur: int, oth: int) -> bool:
     return nums[cur] < nums[oth] if cur != oth else False
 
 
-def get_max_jolts(bank: str) -> int:
-    if not bank:
-        return 0
+def get_max_jolts(bank: str, sz=2) -> int:
     n = len(bank)
+    if not n or sz > n:
+        return 0
     mx, mi = -1, 0
     for i in range(n - 1):
         if int(bank[i]) > mx:
             mx, mi = int(bank[i]), i
+            if mx == 9:
+                break
     my, mj = int(bank[mi + 1]), mi + 1
     for j in range(mj, n):
         # print(":", j, end=",")
         if int(bank[j]) > my:
-            my, mj = int(bank[mj]), j
+            my, mj = int(bank[j]), j
+            # print(my, mj, j)
+            if my == 9:
+                break
 
     val = int(f"{bank[mi]}{bank[mj]}")
-    # print(bank, val, mi, mj)
+    # print(bank, val, mi, mj, i, j, n)
     return val
 
 
@@ -35,18 +40,20 @@ def main(nums: str, **_) -> int:
     jolts: list[int] = []
     for bank in get_battery_bank(nums):
         jolts.append(get_max_jolts(bank))
-    print(sum(jolts))
+    # print(sum(jolts))
     return sum(jolts)
 
 
 if __name__ == "__main__":
+    assert (
+        main(
+            "2232546378857275787561723292343835435343333776427842773354273372424413455462238746648634437374254318"
+        )
+        == 98
+    )
     assert main("987654321111111,") == 98
     assert (
         main("987654321111111, 811111111111119,234234234234278,818181911112111") == 357
-    )
-    assert (
-        "2232546378857275787561723292343835435343333776427842773354273372424413455462238746648634437374254318"
-        == 98
     )
     test_01 = """
 2232546378857275787561723292343835435343333776427842773354273372424413455462238746648634437374254318
