@@ -21,30 +21,34 @@ def get_content(input: str) -> Content:
         else:
             content.ingredients.append(int(line))
     content.ranges.sort()
+    # print(content.ranges)
     return content
 
 
 def is_fresh(ranges: list[tuple[int, int]], ing: int) -> bool:
     l, r = 0, len(ranges) - 1
-    while l < r:
+    while l <= r:
         m = (r + l) // 2
-        print(l, m, r)
         lo, hi = ranges[m]
+        # print("\t", l, m, r, lo, hi, ing)
         if lo <= ing <= hi:
+            # print(ing)
             return True
         if ing < lo:
-            r = m
+            r = m - 1
         elif ing > hi:
-            l = m
+            l = m + 1
     return False
 
 
 def main(data, **_) -> int:
     content = get_content(data)
+    # print(content.ranges)
     fresh = 0
     for ing in content.ingredients:
         if is_fresh(content.ranges, ing):
             fresh += 1
+    print(fresh)
     return fresh
 
 
