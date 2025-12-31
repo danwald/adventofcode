@@ -1,4 +1,6 @@
 from typing import Iterator
+from functools import reduce
+import operator
 
 
 def get_grid(data, **_) -> list[list[int | str]]:
@@ -12,18 +14,18 @@ def get_grid(data, **_) -> list[list[int | str]]:
 
 
 def rows(grid: list[list[int | str]]) -> Iterator[list[int | str]]:
-    height = len(grid)
-    width = len(grid[0])
+    height, width = len(grid), len(grid[0])
     for col in range(width):
         yield [grid[row][col] for row in range(height)]
 
 
-def main(data, **_) -> bool:
+def main(data, **_) -> int:
+    ops = {"*": operator.mul, "+": operator.add}
     grid = get_grid(data)
     row_ans = []
     for row in rows(grid):
         *nums, op = row
-
+        row_ans.append(reduce(ops[op], nums))
     return sum(row_ans)
 
 
