@@ -19,12 +19,14 @@ def rows(grid: list[list[int | str]]) -> Iterator[list[int | str]]:
         yield [grid[row][col] for row in range(height)]
 
 
-def main(data, **_) -> int:
+def main(data, r2l=False) -> int:
     ops = {"*": operator.mul, "+": operator.add}
     grid = get_grid(data)
     row_ans = []
     for row in rows(grid):
         *nums, op = row
+        if r2l:
+            pass
         row_ans.append(reduce(ops[op], nums))
     return sum(row_ans)
 
@@ -52,4 +54,17 @@ if __name__ == "__main__":
 """
         )
         == 5227286044585
+    )
+
+    assert (
+        main(
+            """
+123 328  51 64 
+ 45 64  387 23 
+  6 98  215 314
+*   +   *   +  
+""",
+            r2l=True,
+        )
+        == 3263827
     )
