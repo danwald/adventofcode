@@ -1,6 +1,7 @@
-from typing import Iterator
+from typing import Iterator, Sequence
 from functools import reduce
 import operator
+from itertools import zip_longest
 
 
 def get_grid(data, **_) -> list[list[int | str]]:
@@ -19,6 +20,15 @@ def rows(grid: list[list[int | str]]) -> Iterator[list[int | str]]:
         yield [grid[row][col] for row in range(height)]
 
 
+def get_r2l(*nums: Sequence[int]) -> list[int]:
+    acc: list[int] = []
+    nums = tuple(map(str, nums))
+    for col in zip_longest(*nums, fillvalue="0"):
+        col = int("".join(col))
+        acc.append(col)
+    return list(reversed(acc))
+
+
 def main(data, r2l=False) -> int:
     ops = {"*": operator.mul, "+": operator.add}
     grid = get_grid(data)
@@ -26,7 +36,7 @@ def main(data, r2l=False) -> int:
     for row in rows(grid):
         *nums, op = row
         if r2l:
-            pass
+            nums = get_r2l(*nums)
         row_ans.append(reduce(ops[op], nums))
     return sum(row_ans)
 
@@ -56,13 +66,14 @@ if __name__ == "__main__":
         == 5227286044585
     )
 
+    assert get_r2l(64, 23, 314) == [4, 431, 623]
     assert (
         main(
             """
-123 328  51 64 
- 45 64  387 23 
+123 328  51 64
+ 45 64  387 23
   6 98  215 314
-*   +   *   +  
+*   +   *   +
 """,
             r2l=True,
         )
