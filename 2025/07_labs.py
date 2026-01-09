@@ -1,6 +1,9 @@
 from enum import StrEnum, auto
+from typing import TypeVar
 
-Grid = list[list[str]]
+T = TypeVar('T')
+GridRow = list[T]
+Grid = list[GridRow]
 
 class Direction(StrEnum):
     UP = auto()
@@ -15,10 +18,13 @@ def get_grid(data: str) -> Grid:
     return acc
 
 
-def get_value(grid: Grid, row: int, direction: Direction) -> str:
+def get_value(grid_row: GridRow, col: int, direction: Direction) -> T:
     return ''
 
-def splits(grid: list[list[str]]) -> int:
+def set_value(grid_row: GridRow, row: int, direction: Direction, val: str) -> T:
+    return ''
+
+def splits[T](grid: list[list[T]]) -> int:
     for row in range(len(grid)):
         for col in range(len(grid[row])):
             match grid[row][col]:
