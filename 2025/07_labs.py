@@ -1,15 +1,20 @@
 from enum import StrEnum, auto
 from typing import TypeVar
+from collections import namedtuple
 
-T = TypeVar('T')
+T = TypeVar("T")
 GridRow = list[T]
 Grid = list[GridRow]
+
+Point = namedtuple("Point", ["row", "col"])
+
 
 class Direction(StrEnum):
     UP = auto()
     DOWN = auto()
     LEFT = auto()
-    RIGTH = auto()
+    RIGHT = auto()
+
 
 def get_grid(data: str) -> Grid:
     acc: Grid = []
@@ -18,26 +23,57 @@ def get_grid(data: str) -> Grid:
     return acc
 
 
-def get_value(grid_row: GridRow, col: int, direction: Direction) -> T:
-    return ''
+def get_point(point: Point, direction: Direction) -> Point:
+    match direction:
+        case Direction.UP:
+            return Point(point.row - 1, point.col)
+        case Direction.DOWN:
+            return Point(point.row + 1, point.col)
+        case Direction.LEFT:
+            return Point(point.row, point.col - 1)
+        case Direction.RIGHT:
+            return Point(point.row, point.col + 1)
 
-def set_value(grid_row: GridRow, row: int, direction: Direction, val: str) -> T:
-    return ''
+
+def inbounds(grid: Grid, point: Point) -> bool:
+    rows, cols, row, col = len(grid), len(grid[0]), point.row, point.col
+    return 0 <= row < rows and 0 <= col < cols
+
+
+def get_value(grid: Grid, point: Point, direction: Direction) -> T | None:
+    rel_point = get_point(point, direction)
+    if inbounds(grid, rel_point):
+        return grid[rel_point.row][rel_point.col]
+    return None
+
+
+def set_value(grid: Grid, point: Point, direction: Direction, val: T) -> bool:
+    rel_point = get_point(point, direction)
+    if inbounds(grid, rel_point):
+        grid[rel_point.row][rel_point.col] = val
+        return True
+    return False
+
 
 def splits[T](grid: list[list[T]]) -> int:
+    count = 0
     for row in range(len(grid)):
         for col in range(len(grid[row])):
+            point = Point(row, col)
             match grid[row][col]:
-                case '.':
-                    pass
-                case 'S':
-                    grid[row][col] = '|'
-                case '^':
-                    pass
-                case: '|':
+                case ".":
+                    if get_value(grid, point, Direction.UP) == "|":
+                        grid[row][col] = "|"
+                case "S":
+                    set_value(grid, point, Direction.DOWN, "|")
+                case "^":
+                    set_value(grid, point, Direction.LEFT, "|")
+                    set_value(grid, point, Direction.RIGHT, "|")
+                    count += 1
+                case "|":
                     pass
 
-
+    return count
 
 
 def main(data: str, **_) -> int:
