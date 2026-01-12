@@ -86,19 +86,31 @@ def timelines[T](grid: list[list[T]]) -> int:
             if grid[row][col] == "S":
                 stack.append(Point(row, col))
                 break
-    while cur := stack.pop():
+    while stack:
+        cur: Point = stack.pop()
+        if not inbounds(grid, cur):
+            count += 1
+            continue
+
         match grid[cur.row][cur.col]:
             case "S" | "|":
-                nxt = Point(cur.row + 1, cur.col)
-                set_value(grid, cur, Direction.DOWN, "|")
-                stack.append(nxt)
+                stack.append(Point(cur.row + 1, cur.col))
+            case ".":
+                grid[cur.row][cur.col] = "|"
+                stack.append(Point(cur.row + 1, cur.col))
+            case "^":
+                stack.append(Point(cur.row, cur.col - 1))
+                stack.append(Point(cur.row, cur.col + 1))
 
     return count
 
 
-def main(data: str, **_) -> int:
+def main(data: str, split_counts=True) -> int:
     grid = get_grid(data)
-    return splits(grid)
+    if split_counts:
+        return splits(grid)
+    else:
+        return timelines(grid)
 
 
 if __name__ == "__main__":
@@ -125,6 +137,31 @@ if __name__ == "__main__":
         )
         == 21
     )
+    assert (
+        main(
+            """
+.......S.......
+.......^.......
+...............
+...............
+......^.^......
+...............
+.....^.^.^.....
+...............
+....^.^...^....
+...............
+...^.^...^.^...
+...............
+..^...^.....^..
+...............
+.^.^.^.^.^...^.
+...............
+""",
+            split_counts=False,
+        )
+        == 40
+    )
+
     assert (
         main(
             """......................................................................S......................................................................
