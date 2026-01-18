@@ -1,5 +1,6 @@
 import math
 from dataclasses import dataclass
+from itertools import count
 
 
 @dataclass(slots=True)
@@ -14,6 +15,11 @@ class Point:
             (self.x - other.x) ^ 2 + (self.y - other.y) ^ 2 + (self.z - other.z) ^ 2
         )
 
+    @staticmethod
+    def group_id() -> int:
+        counter = count()
+        yield next(counter)
+        while True:
     @classmethod
     def point_str(cls, x: str, y: str, z: str) -> "Point":
         return cls(int(x), int(y), int(z))
@@ -32,11 +38,25 @@ class Point:
 
 def main(data: str) -> int:
     points = Point.read_points(data)
-    processed: list[Point] = []
-    min_d = 0, min_point = None
-    for point in points:
-        if not point.assigned:
-            dist = 
+    while to_process:=list(lambda x:not x.assisgned, points):
+        cur_point = to_process.pop()
+        min_point: point, min_distance = None, float('inf')
+        for point in to_process:
+            dist =  cur_point.distance(point)
+            if dist < min_distance:
+                min_point, min_dist = point, min_dist
+
+        for point in list(lamda x: x.assigned, points)
+            dist =  cur_point.distance(point)
+            if dist < min_distance:
+                min_point, min_dist = point, min_dist
+
+        if point:
+            if point.assigned:
+                cur_point = 
+
+
+
     return len(points)
 
 
