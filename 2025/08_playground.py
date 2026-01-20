@@ -1,6 +1,7 @@
 import math
 from dataclasses import dataclass
 from itertools import count
+from typing import ClassVar
 
 
 @dataclass(slots=True)
@@ -10,16 +11,17 @@ class Point:
     z: int
     jb: int = -1
 
+    _counter: ClassVar[count] = count()
+
     def distance(self, other: "Point") -> float:
         return math.sqrt(
             (self.x - other.x) ^ 2 + (self.y - other.y) ^ 2 + (self.z - other.z) ^ 2
         )
 
-    @staticmethod
-    def group_id() -> int:
-        counter = count()
-        yield next(counter)
-        while True:
+    @classmethod
+    def group_id(cls) -> int:
+        return next(cls._counter)
+
     @classmethod
     def point_str(cls, x: str, y: str, z: str) -> "Point":
         return cls(int(x), int(y), int(z))
@@ -33,29 +35,32 @@ class Point:
         return points
 
     def assigned(self) -> bool:
-        return self.jb != -1
+        return not self.jb == -1
 
 
 def main(data: str) -> int:
     points = Point.read_points(data)
-    while to_process:=list(lambda x:not x.assisgned, points):
+    while to_process := list(filter(lambda x: not x.assigned, points)):
         cur_point = to_process.pop()
-        min_point: point, min_distance = None, float('inf')
+        min_point, min_dist = None, float("inf")
         for point in to_process:
-            dist =  cur_point.distance(point)
-            if dist < min_distance:
+            dist = cur_point.distance(point)
+            if dist < min_dist:
                 min_point, min_dist = point, min_dist
 
-        for point in list(lamda x: x.assigned, points)
-            dist =  cur_point.distance(point)
-            if dist < min_distance:
+        for point in list(filter(lambda x: x.assigned, points)):
+            dist = cur_point.distance(point)
+            if dist < min_dist:
                 min_point, min_dist = point, min_dist
+        print(min_point)
+        if min_point:
+            if min_point.assigned:
+                cur_point.jb = min_point.jb
+            else:
+                cur_point.jb = Point.group_id()
+                min_point.jb = cur_point.jb
 
-        if point:
-            if point.assigned:
-                cur_point = 
-
-
+    print(points)
 
     return len(points)
 
