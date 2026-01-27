@@ -22,13 +22,30 @@ class Point:
         return abs(self.x - other.x + 1) * abs(self.y - other.y + 1)
 
     @staticmethod
+    def contained(fst: "Point", scd: "Point", points: "list[Point]") -> bool:
+        for pnt in points:
+            if pnt != fst or pnt != scd:
+                if (fst.x <= pnt.x <= scd.x or scd.x <= pnt.x <= fst.x) and (
+                    fst.y <= pnt.y <= scd.y or scd.y <= pnt.y <= fst.y
+                ):
+                    continue
+                else:
+                    print(fst, pnt, scd)
+                    return False
+        return True
+
+    @staticmethod
     def brute_force(points: "list[Point]", check_intersections=False) -> int:
         max_dist = 0
         for p1 in points:
             for p2 in points:
+                if p1 == p2:
+                    continue
+                if check_intersections and Point.contained(p1, p2, points):
+                    continue
                 if not check_intersections:
                     max_dist = max(max_dist, p1.area(p2))
-        # print(max_dist)
+        print(max_dist)
         return max_dist
 
 
