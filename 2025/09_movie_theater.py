@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 
 
-@dataclass(slots=True)
+@dataclass(slots=True, frozen=True)
 class Point:
     x: int
     y: int
@@ -22,18 +22,19 @@ class Point:
         return abs(self.x - other.x + 1) * abs(self.y - other.y + 1)
 
     @staticmethod
-    def brute_force(points: "list[Point]") -> int:
+    def brute_force(points: "list[Point]", check_intersections=False) -> int:
         max_dist = 0
         for p1 in points:
             for p2 in points:
-                max_dist = max(max_dist, p1.area(p2))
+                if not check_intersections:
+                    max_dist = max(max_dist, p1.area(p2))
         # print(max_dist)
         return max_dist
 
 
-def main(data, **_) -> int:
+def main(data, **kwargs) -> int:
     points = Point.read_points(data)
-    return Point.brute_force(points)
+    return Point.brute_force(points, check_intersections=bool(kwargs))
 
 
 if __name__ == "__main__":
@@ -49,6 +50,20 @@ if __name__ == "__main__":
 7,3"""
         )
         == 50
+    )
+    assert (
+        main(
+            """7,1
+11,1
+11,7
+9,7
+9,5
+2,5
+2,3
+7,3""",
+            part2=True,
+        )
+        == 24
     )
 
     main(
