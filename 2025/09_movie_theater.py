@@ -22,17 +22,14 @@ class Point:
         return abs(self.x - other.x + 1) * abs(self.y - other.y + 1)
 
     @staticmethod
-    def contained(fst: "Point", scd: "Point", points: "list[Point]") -> bool:
+    def has_points(fst: "Point", scd: "Point", points: "list[Point]") -> bool:
         for pnt in points:
-            if pnt != fst or pnt != scd:
+            if pnt != fst and pnt != scd:
                 if (fst.x <= pnt.x <= scd.x or scd.x <= pnt.x <= fst.x) and (
-                    fst.y <= pnt.y <= scd.y or scd.y <= pnt.y <= fst.y
+                    (fst.y <= pnt.y <= scd.y) or (scd.y <= pnt.y <= fst.y)
                 ):
-                    continue
-                else:
-                    print(fst, pnt, scd)
-                    return False
-        return True
+                    return True
+        return False
 
     @staticmethod
     def brute_force(points: "list[Point]", check_intersections=False) -> int:
@@ -41,11 +38,17 @@ class Point:
             for p2 in points:
                 if p1 == p2:
                     continue
-                if check_intersections and Point.contained(p1, p2, points):
+                if check_intersections and Point.has_points(p1, p2, points):
+                    # print("  skipping", p1, p2)
                     continue
-                if not check_intersections:
-                    max_dist = max(max_dist, p1.area(p2))
-        print(max_dist)
+                new_area = p1.area(p2)
+                # print("checking", p1, p2)
+                if new_area > max_dist:
+                    # if check_intersections:
+                    #    print(f"{max_dist}->{new_area} via {p1}<>{p2}")
+                    max_dist = new_area
+
+                # max_dist = max(max_dist, p1.area(p2))
         return max_dist
 
 
@@ -55,19 +58,18 @@ def main(data, **kwargs) -> int:
 
 
 if __name__ == "__main__":
-    assert (
-        main(
-            """7,1
+    assert Point(7, 1) == Point(7, 1)
+    assert Point(1, 1) != Point(2, 2)
+    assert Point.has_points(Point(7, 1), Point(11, 5), [Point(7, 1), Point(8, 3)])
+    assert not Point.has_points(Point(7, 1), Point(11, 5), [Point(7, 1), Point(1, 3)])
+    assert main("""7,1
 11,1
 11,7
 9,7
 9,5
 2,5
 2,3
-7,3"""
-        )
-        == 50
-    )
+7,3""") == 50
     assert (
         main(
             """7,1
@@ -81,10 +83,9 @@ if __name__ == "__main__":
             part2=True,
         )
         == 24
-    )
+    )  # requires floodfill then check BB only has tiles
 
-    main(
-        """98254,50455
+    main("""98254,50455
 98254,51678
 98235,51678
 98235,52880
@@ -579,5 +580,4 @@ if __name__ == "__main__":
 98055,48017
 98055,49234
 98160,49234
-98160,50455"""
-    ) == 4777816465
+98160,50455""") == 4777816465
