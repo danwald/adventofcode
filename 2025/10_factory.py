@@ -9,21 +9,30 @@ class Indicator:
     def file_str(cls, data: str) -> "Indicator":
         return cls(data[1:-1])
 
+
 @dataclass(slots=True, frozen=True)
 class Button:
     button: list[tuple[int, ...]]
 
     @classmethod
-    def file_str(cls, data: str) -> "Button":
-        return cls(data[1:-1])
+    def file_str(cls, data: list[str]) -> "Button":
+        tups = []
+        for tup in data:
+            tups.append(eval(tup))
+        return cls(tups)
+
 
 @dataclass(slots=True, frozen=True)
 class Joltage:
-    joltage: list[tuple[int, ...]]
+    joltage: list[int]
 
     @classmethod
     def file_str(cls, data: str) -> "Joltage":
-        return cls(data[1:-1])
+        jolts = []
+        for jolt in data.strip()[1:-1].split(","):
+            jolts.append(int(jolt))
+        return cls(jolts)
+
 
 @dataclass(slots=True, frozen=True)
 class Record:
@@ -32,13 +41,22 @@ class Record:
     joltage: Joltage
 
     @classmethod
-    def from_str(cls, data: str) -> "list[Record]": ...
+    def from_str(cls, data: str) -> "list[Record]":
         records = []
-        for line in data.trim().split('\n'):
-            indicator, *button, joltage = line.split(' ')
+        for line in data.strip().split("\n"):
+            indicator, *button, joltage = line.split(" ")
+            records.append(
+                cls(
+                    Indicator.file_str(indicator),
+                    Button.file_str(button),
+                    Joltage.file_str(joltage),
+                )
+            )
+        return records
 
     @property
-    def least_presses(self) -> int: ...
+    def least_presses(self) -> int:
+        return 0
 
 
 def main(data, **_) -> int:
