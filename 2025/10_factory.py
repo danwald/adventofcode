@@ -3,22 +3,33 @@ from dataclasses import dataclass
 
 @dataclass(slots=True, frozen=True)
 class Indicator:
-    indicator: str
+    mask: int
 
     @classmethod
-    def file_str(cls, data: str) -> "Indicator":
-        return cls(data[1:-1])
+    def from_str(cls, data: str) -> "Indicator":
+        mask = 0
+        for idx, ch in enumerate(data[1:-1]):
+            if ch != ".":
+                mask |= 1 << idx
+        return cls(mask)
 
 
 @dataclass(slots=True, frozen=True)
 class Button:
-    button: list[tuple[int, ...]]
+    mask: list[int]
 
     @classmethod
-    def file_str(cls, data: list[str]) -> "Button":
+    def from_str(cls, data: list[str]) -> "Button":
         tups = []
         for tup in data:
-            tups.append(eval(tup))
+            mask = 0
+            buttons = eval(tup)
+            if isinstance(buttons, int):
+                mask |= 1 << buttons
+            else:
+                for button in buttons:
+                    mask |= 1 << button
+            tups.append(mask)
         return cls(tups)
 
 
@@ -27,7 +38,7 @@ class Joltage:
     joltage: list[int]
 
     @classmethod
-    def file_str(cls, data: str) -> "Joltage":
+    def from_str(cls, data: str) -> "Joltage":
         jolts = []
         for jolt in data.strip()[1:-1].split(","):
             jolts.append(int(jolt))
@@ -47,9 +58,9 @@ class Record:
             indicator, *button, joltage = line.split(" ")
             records.append(
                 cls(
-                    Indicator.file_str(indicator),
-                    Button.file_str(button),
-                    Joltage.file_str(joltage),
+                    Indicator.from_str(indicator),
+                    Button.from_str(button),
+                    Joltage.from_str(joltage),
                 )
             )
         return records
