@@ -19,9 +19,9 @@ class Button:
     mask: list[int]
 
     @classmethod
-    def from_str(cls, data: list[str]) -> "Button":
+    def from_str(cls, data: str) -> "Button":
         tups = []
-        for tup in data:
+        for tup in data.split(" "):
             mask = 0
             buttons = eval(tup)
             if isinstance(buttons, int):
@@ -59,7 +59,7 @@ class Record:
             records.append(
                 cls(
                     Indicator.from_str(indicator),
-                    Button.from_str(button),
+                    Button.from_str(" ".join(button)),
                     Joltage.from_str(joltage),
                 )
             )
@@ -76,6 +76,8 @@ def main(data, **_) -> int:
 
 
 if __name__ == "__main__":
+    assert Indicator.from_str("[.##.]").mask == 6
+    assert Button.from_str("(1,2) (0,1,2) (3,4)").mask == [6, 7, 24]
     assert main("""
 [.##.] (3) (1,3) (2) (2,3) (0,2) (0,1) {3,5,4,7}
 [...#.] (0,2,3,4) (2,3) (0,4) (0,1,2) (1,2,3,4) {7,5,12,7,2}
