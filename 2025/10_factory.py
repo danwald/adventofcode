@@ -67,7 +67,19 @@ class Record:
 
     @property
     def least_presses(self) -> int:
-        return 0
+        least = float('inf')
+
+        def search(i, state, seen):
+            if state == self.indicator:
+                return 1
+            if state < 
+            pass
+
+        for idx in range(self.button):
+            least = min(search(idx, 0)
+
+
+        return least
 
 
 def main(data, **_) -> int:
