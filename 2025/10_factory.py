@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from functools import reduce
 
 
 @dataclass(slots=True, frozen=True)
@@ -31,6 +32,12 @@ class Button:
                     mask |= 1 << button
             tups.append(mask)
         return cls(tups)
+
+    def __getitem__(self, idx) -> int:
+        return self.mask[idx]
+
+    def __len__(self) -> int:
+        return len(self.mask)
 
 
 @dataclass(slots=True, frozen=True)
@@ -67,18 +74,27 @@ class Record:
 
     @property
     def least_presses(self) -> int:
-        least = float('inf')
+        subs, cur, least = [], [], len(self.button)
 
-        def search(i, state, seen):
-            if state == self.indicator:
-                return 1
-            if state < 
-            pass
+        def solved(sub: list[int]) -> bool:
+            return reduce(lambda a, b: a ^ b, sub, 0) == self.indicator
 
-        for idx in range(self.button):
-            least = min(search(idx, 0)
+        def bt(i) -> None:
+            # print(i, len(self.button), cur)
+            if i == len(self.button):
+                subs.append(cur[:])
+                return
 
+            bt(i + 1)
+            cur.append(self.button[i])
+            bt(i + 1)
+            cur.pop()
 
+        bt(0)
+        for sub in subs:
+            if solved(sub):
+                print(sub)
+                least = min(least, len(sub))
         return least
 
 
