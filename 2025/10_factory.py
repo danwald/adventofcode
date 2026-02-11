@@ -72,15 +72,14 @@ class Record:
             )
         return records
 
+    def solved(self, sub: list[int]) -> bool:
+        return reduce(lambda a, b: a ^ b, sub, 0) == self.indicator.mask
+
     @property
     def least_presses(self) -> int:
         subs, cur, least = [], [], len(self.button)
 
-        def solved(sub: list[int]) -> bool:
-            return reduce(lambda a, b: a ^ b, sub, 0) == self.indicator
-
         def bt(i) -> None:
-            # print(i, len(self.button), cur)
             if i == len(self.button):
                 subs.append(cur[:])
                 return
@@ -92,8 +91,7 @@ class Record:
 
         bt(0)
         for sub in subs:
-            if solved(sub):
-                print(sub)
+            if self.solved(sub):
                 least = min(least, len(sub))
         return least
 
@@ -106,6 +104,9 @@ def main(data, **_) -> int:
 if __name__ == "__main__":
     assert Indicator.from_str("[.##.]").mask == 6
     assert Button.from_str("(1,2) (0,1,2) (3,4)").mask == [6, 7, 24]
+    assert Record.from_str("[.##.] (3) (1,3) (2) (2,3) (0,2) (0,1) {3,5,4,7}")[
+        0
+    ].solved([3, 5])
     assert main("""
 [.##.] (3) (1,3) (2) (2,3) (0,2) (0,1) {3,5,4,7}
 [...#.] (0,2,3,4) (2,3) (0,4) (0,1,2) (1,2,3,4) {7,5,12,7,2}
