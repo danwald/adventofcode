@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from functools import reduce
+from collections import deque
 
 
 @dataclass(slots=True, frozen=True)
@@ -95,10 +96,17 @@ class Record:
                 least = min(least, len(sub))
         return least
 
+    @property
+    def least_jolt_presses(self) -> int:
+        return 0
 
-def main(data, **_) -> int:
+
+def main(data, jolts=False) -> int:
     records = Record.from_str(data)
-    val = sum([record.least_presses for record in records])
+    val = sum(
+        record.least_jolt_presses if jolts else record.least_presses
+        for record in records
+    )
     # print(val)
     return val
 
@@ -265,4 +273,16 @@ if __name__ == "__main__":
 [.#..##] (0,1,2,5) (2,4,5) (0,3,5) (1,3,5) (2,3,4) (0,2) {32,19,22,40,7,38}
 [##..#.##.#] (3,5,8) (5,6) (0,2,6,9) (0,1,3,4,6,7,9) (0,3,5,6,7,9) (2,3,5,7) (0,1,2,3,5,6,7,8) (4,6,7,8) (0,1,5,7,8,9) (0,2,3,4,5,8) (1,5) {73,43,49,84,32,198,164,57,64,36}
 [#...###] (0,3,4) (0,2,4,6) (1,3,5) (3,4) (0,1,6) (2,6) {16,28,21,29,15,15,34}"""
+    )
+
+    assert (
+        main(
+            """
+[.##.] (3) (1,3) (2) (2,3) (0,2) (0,1) {3,5,4,7}
+[...#.] (0,2,3,4) (2,3) (0,4) (0,1,2) (1,2,3,4) {7,5,12,7,2}
+[.###.#] (0,1,2,3,4) (0,3,4) (0,1,2,4,5) (1,2) {10,11,11,5,10,5}
+                """,
+            jolts=True,
+        )
+        == 33
     )
